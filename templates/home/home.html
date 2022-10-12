@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/leaflet.extra-markers.min.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
+    integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/css/leaflet.extra-markers.min.css">
+
+<link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+
+
+
+{% block map_content %}
+<script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+
+<script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js"
+    integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/js/leaflet.extra-markers.min.js"></script>
+<script type="text/javascript" src="{% static 'js/markers.js' %}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet-sidebar-v2@3.2.3/js/leaflet-sidebar.min.js"></script>
+
+<div id="map" style="height:100%;"></div>
+
+<div id="sidebar">
+    <div class="d-flex justify-content-between align-items-center">
+        <h5 id="name"></h5>
+        <button type="button" class="btn btn-primary btn-sm"><i class="fa fa-arrow-circle-o-right"
+                aria-hidden="false"></i></button>
+    </div>
+    <div class="sidebarDiv">
+
+    </div>
+
+    <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img id="image1" src=`${selected.image}` class="d-block w-100" alt="First Image">
+            </div>
+            <div class="carousel-item active">
+                <img id="image1" src=`${selected.image_2}` class="d-block w-100" alt="First Image">
+            </div>
+
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <!-- <ul class="list-group"> -->
+    <div>
+        <h6>Year started:</h6>
+        <p id="year_started"></p>
+    </div>
+    <div>
+        <h6>Description: </h6>
+        <p id="description"></p>
+    </div>
+    <div>
+        <h6>Fee: </h6>
+        <p id="fee"></p>
+    </div>
+    <div>
+        <h6>Contact: </h6>
+        <p id="contact"></p>
+    </div>
+    <div>
+        <h6>Email: </h6>
+        <p id="email"></p>
+    </div>
+    <div>
+        <h6>Access Road: </h6>
+        <p id="access_road"></p>
+    </div>
+    <!-- </ul> -->
+</div>
+
+
+
+<script type="text/javascript">
+    var dataUrl = '{% url "get_sites" %}'
+    var map = L.map('map');
+
+    var sidebar = L.control.sidebar('sidebar').addTo(map);
+    var sidebarDiv = document.getElementById('sidebar');
+    var selected;
+
+    var sidebar = L.control.sidebar('sidebar', {
+        closeButton: true,
+        position: 'right'
+    });
+
+    // map.addControl(sidebar);
+
+
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var redMarker = L.ExtraMarkers.icon({
+        icon: 'fa-coffee',
+        markerColor: 'orange',
+        shape: 'square',
+        prefix: 'fa'
+    });
+
+    fetch("{% url 'get_sites' %}")
+        .then(function (resp) {
+            return resp.json();
+        })
+        .then(function (data) {
+            console.log(data);
+            points = L.geoJson(data)
+            L.geoJson(data, {
+                onEachFeature: function onEachFeature(feature, layer) {
+                    var props = feature.properties;
+                    var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
+                    // var popup = L.responsivePopup().setContent('A pretty CSS3 responsive popup.<br> Easily customizable.');
+                    layer.bindPopup(content);
+                    // layer.setIcon(redMarker);
+                    layer.on({
+                        click: function () {
+                            console.log(props)
+                            selected = props;
+                            sidebar.toggle();
+                            // openSidebar(props)
+                        }
+                    })
+
+                }
+            })
+                .addTo(map)
+            map.fitBounds(points.getBounds());
+        })
+
+    sidebar.on('show', function () {
+        console.log(selected)
+
+        // document.getElementById('name').textContent = selected.name;
+        // document.getElementById('image1').src = selected.image;
+        // document.getElementById('image2').src = selected.image_2;
+        // document.getElementById('year_started').textContent = selected.Year_of_Inception;
+        // document.getElementById('description').textContent = selected.brief_history;
+        // document.getElementById('contact').textContent = selected.contact;
+        // document.getElementById('fee').textContent = selected.Cost_Per_Night;
+        // document.getElementById('email').textContent = selected.Email_address;
+        // document.getElementById('access_road').textContent = selected.email;
+    })
+
+    sidebar.on('shown', function () {
+        console.log('Sidebar will be hidden')
+    })
+
+    sidebar.on('hidden', function () {
+        console.log('Sidebar is hidden')
+    })
+
+    L.DomEvent.on(sidebar.getCloseButton(), 'click', function () {
+        console.log('Close button Clicked;')
+    })
+
+    function hasClass(element, cls) {
+        return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+    }
+
+
+
+</script>
+{% endblock map_content %}
