@@ -5,11 +5,10 @@
 <link rel="stylesheet" href="{% static 'css/leaflet.extra-markers.min.css' %}">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
     integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-<link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/css/leaflet.extra-markers.min.css">
 
 <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+
 
 
 
@@ -18,9 +17,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js"
     integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/js/leaflet.extra-markers.min.js"></script>
-<script type="text/javascript" src="{% static 'js/markers.js' %}"></script>
+<script src="{% static 'js/leaflet.extra-markers.min.js' %}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet-sidebar-v2@3.2.3/js/leaflet-sidebar.min.js"></script>
 
@@ -127,7 +124,7 @@
                     var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
                     // var popup = L.responsivePopup().setContent('A pretty CSS3 responsive popup.<br> Easily customizable.');
                     layer.bindPopup(content);
-                    // layer.setIcon(redMarker);
+                    layer.setIcon(redMarker);
                     layer.on({
                         click: function () {
                             console.log(props)
