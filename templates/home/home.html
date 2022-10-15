@@ -1,39 +1,51 @@
-{% extends 'base.html' %}
-
+{% extends 'base.html'%}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'css/leaflet.extra-markers.min.css' %}">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
-    integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-<link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/css/leaflet.extra-markers.min.css">
-
-<link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
 
 
 
 {% block map_content %}
-<script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+    }
 
-<script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js"
-    integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-extra-markers/1.2.1/js/leaflet.extra-markers.min.js"></script>
-<script type="text/javascript" src="{% static 'js/markers.js' %}"></script>
+    html,
+    body,
+    #map {
+        height: 80vh;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/leaflet-sidebar-v2@3.2.3/js/leaflet-sidebar.min.js"></script>
+    .lorem {
+        font-style: italic;
+        color: #AAA;
+    }
 
-<div id="map" style="height:100%;"></div>
+    #sidebar {
+        display: none;
+    }
+</style>
 
-<div id="sidebar">
+<!-- stylesheets -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+    integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+<link rel="stylesheet" href="{% static 'css/L.Control.Sidebar.css' %}">
+
+<!-- javascript -->
+<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+    integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
+<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+    integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+<script src="{% static 'js/L.Control.Sidebar.js'%}"></script>
+
+
+<div id="side-bar">
     <div class="d-flex justify-content-between align-items-center">
         <h5 id="name"></h5>
         <button type="button" class="btn btn-primary btn-sm"><i class="fa fa-arrow-circle-o-right"
                 aria-hidden="false"></i></button>
-    </div>
-    <div class="sidebarDiv">
-
     </div>
 
     <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
@@ -80,39 +92,37 @@
         <h6>Access Road: </h6>
         <p id="access_road"></p>
     </div>
-    <!-- </ul> -->
+
 </div>
 
+<div id="map"></div>
 
-
-<script type="text/javascript">
-    var dataUrl = '{% url "get_sites" %}'
-    var map = L.map('map');
-
-    var sidebar = L.control.sidebar('sidebar').addTo(map);
-    var sidebarDiv = document.getElementById('sidebar');
-    var selected;
-
-    var sidebar = L.control.sidebar('sidebar', {
-        closeButton: true,
-        position: 'right'
-    });
-
-    // map.addControl(sidebar);
-
-
+<script>
+    let mapOptions = {
+        center: [51.958, 9.141],
+        zoom: 10
+    }
+    let map = new L.map('map', mapOptions)
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    var redMarker = L.ExtraMarkers.icon({
-        icon: 'fa-coffee',
-        markerColor: 'orange',
-        shape: 'square',
-        prefix: 'fa'
-    });
+    let marker = new L.marker([51.958, 9.141]).addTo(map)
+
+
+    let sidebar = new L.control.sidebar('side-bar', {
+        closeButton: true,
+        position: 'right'
+    })
+    map.addControl(sidebar)
+
+    marker.on('click', function () {
+        sidebar.toggle()
+    })
+
+
 
     fetch("{% url 'get_sites' %}")
         .then(function (resp) {
@@ -130,7 +140,6 @@
                     // layer.setIcon(redMarker);
                     layer.on({
                         click: function () {
-                            console.log(props)
                             selected = props;
                             sidebar.toggle();
                             // openSidebar(props)
@@ -143,8 +152,10 @@
             map.fitBounds(points.getBounds());
         })
 
-    sidebar.on('show', function () {
-        console.log(selected)
+// Methods to be overriden on event occurances
+
+    // sidebar.on('show', function () {
+    //     console.log(selected)
 
         // document.getElementById('name').textContent = selected.name;
         // document.getElementById('image1').src = selected.image;
@@ -155,25 +166,27 @@
         // document.getElementById('fee').textContent = selected.Cost_Per_Night;
         // document.getElementById('email').textContent = selected.Email_address;
         // document.getElementById('access_road').textContent = selected.email;
-    })
+    // })
 
-    sidebar.on('shown', function () {
-        console.log('Sidebar will be hidden')
-    })
 
-    sidebar.on('hidden', function () {
-        console.log('Sidebar is hidden')
-    })
+        // sidebar.on('shown', function () {
+        //     console.log('Sidebar will be hidden')
+        // })
 
-    L.DomEvent.on(sidebar.getCloseButton(), 'click', function () {
-        console.log('Close button Clicked;')
-    })
+        // sidebar.on('hidden', function () {
+        //     console.log('Sidebar is hidden')
+        // })
 
-    function hasClass(element, cls) {
-        return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
-    }
+        // L.DomEvent.on(sidebar.getCloseButton(), 'click', function () {
+        //     console.log('Close button Clicked;')
+        // })
+
+        // function hasClass(element, cls) {
+        //     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+        // }
 
 
 
 </script>
+
 {% endblock map_content %}
