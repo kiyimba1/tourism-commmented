@@ -8,7 +8,7 @@
 
 <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
-
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 
 
 
@@ -18,12 +18,13 @@
 <script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js"
     integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
 <script src="{% static 'js/leaflet.extra-markers.min.js' %}"></script>
+<script src="{% static 'js/sidebar.js' %}"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/leaflet-sidebar-v2@3.2.3/js/leaflet-sidebar.min.js"></script>
 
 <div id="map" style="height:100%;"></div>
 
 <div id="sidebar">
+    <h1>{{selected.name}}</h1>
     <div class="d-flex justify-content-between align-items-center">
         <h5 id="name"></h5>
         <button type="button" class="btn btn-primary btn-sm"><i class="fa fa-arrow-circle-o-right"
@@ -63,7 +64,7 @@
     </div>
     <div>
         <h6>Fee: </h6>
-        <p id="fee"></p>
+        <p id="fee">{{selected.fee}}</p>
     </div>
     <div>
         <h6>Contact: </h6>
@@ -86,7 +87,6 @@
     var dataUrl = '{% url "get_sites" %}'
     var map = L.map('map');
 
-    var sidebar = L.control.sidebar('sidebar').addTo(map);
     var sidebarDiv = document.getElementById('sidebar');
     var selected;
 
@@ -95,8 +95,7 @@
         position: 'right'
     });
 
-    // map.addControl(sidebar);
-
+    map.addControl(sidebar);
 
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -116,7 +115,6 @@
             return resp.json();
         })
         .then(function (data) {
-            console.log(data);
             points = L.geoJson(data)
             L.geoJson(data, {
                 onEachFeature: function onEachFeature(feature, layer) {
@@ -127,7 +125,6 @@
                     layer.setIcon(redMarker);
                     layer.on({
                         click: function () {
-                            console.log(props)
                             selected = props;
                             sidebar.toggle();
                             // openSidebar(props)
@@ -142,16 +139,16 @@
 
     sidebar.on('show', function () {
         console.log(selected)
-
-        // document.getElementById('name').textContent = selected.name;
-        // document.getElementById('image1').src = selected.image;
-        // document.getElementById('image2').src = selected.image_2;
-        // document.getElementById('year_started').textContent = selected.Year_of_Inception;
-        // document.getElementById('description').textContent = selected.brief_history;
-        // document.getElementById('contact').textContent = selected.contact;
-        // document.getElementById('fee').textContent = selected.Cost_Per_Night;
-        // document.getElementById('email').textContent = selected.Email_address;
-        // document.getElementById('access_road').textContent = selected.email;
+        console.log("Selected Item");
+        document.getElementById('name').textContent = selected.name;
+        document.getElementById('image1').src = selected.image;
+        document.getElementById('image2').src = selected.image_2;
+        document.getElementById('year_started').textContent = selected.Year_of_Inception;
+        document.getElementById('description').textContent = selected.brief_history;
+        document.getElementById('contact').textContent = selected.contact;
+        document.getElementById('fee').textContent = selected.Cost_Per_Night;
+        document.getElementById('email').textContent = selected.Email_address;
+        document.getElementById('access_road').textContent = selected.email;
     })
 
     sidebar.on('shown', function () {
