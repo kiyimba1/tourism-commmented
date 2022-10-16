@@ -139,7 +139,7 @@ STATIC_URL = '/static/'
 # STATIC_FILES_DIRS = [str(BASE_DIR / 'static')]
 
 STATICFILES_DIRS = [
-      BASE_DIR / "static"
+    BASE_DIR / "static"
 ]
 
 STATICFILES_FINDERS = [
@@ -164,11 +164,11 @@ LEAFLET_CONFIG = {
          "http://mts2.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", {}),
     ],
 
-    # 'PLUGINS': {
-    #     'more-markers': {
-    #         'css': [os.path.join(STATIC_ROOT, ('css/leaflet.extra-markers.min.css'))],
-    #         'js': [os.path.join(STATIC_ROOT, ('js/leaflet.extra-markers.js'))],
-    #         'auto-include': True,
-    #     }
-    # }
+    'PLUGINS': {
+        'more-markers': {
+            'css': [os.path.join(STATIC_URL, ('css/leaflet.extra-markers.min.css'))],
+            'js': [os.path.join(STATIC_URL, ('js/leaflet.extra-markers.min.js'))],
+            'auto-include': True,
+        }
+    }
 }

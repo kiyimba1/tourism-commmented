@@ -1,47 +1,51 @@
 {% extends 'base.html'%}
 {% load static %}
+{% load leaflet_tags %}
 
 
 
 
 {% block map_content %}
 <style>
-    body {
-        padding: 0;
-        margin: 0;
+    .leaflet-container {
+
+        width: 100%;
+        height: 100%;
     }
 
-    html,
-    body,
+    #specialbigmap {
+        height: 600px;
+    }
+
+    /* Resize the "display_raw" textbox */
+    .django-leaflet-raw-textarea {
+        width: 100%;
+    }
+
+    .leaflet-marker-icon img {
+        border: 0;
+    }
+
     #map {
-        height: 80vh;
-    }
-
-    .lorem {
-        font-style: italic;
-        color: #AAA;
-    }
-
-    #sidebar {
-        display: none;
+        height: 100%;
+        width: 100%;
     }
 </style>
 
 <!-- stylesheets -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
-    integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+{% leaflet_js %}
+{% leaflet_css %}
 <link rel="stylesheet" href="{% static 'css/L.Control.Sidebar.css' %}">
 
-<!-- javascript -->
-<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
-    integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+<link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
 
-<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
-    integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+<!-- javascript -->
 <script src="{% static 'js/L.Control.Sidebar.js'%}"></script>
 
+{% leaflet_map "main" %}
 
-<div id="side-bar">
+<!-- <div id="side-bar">
     <div class="d-flex justify-content-between align-items-center">
         <h5 id="name"></h5>
         <button type="button" class="btn btn-primary btn-sm"><i class="fa fa-arrow-circle-o-right"
@@ -67,7 +71,6 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-    <!-- <ul class="list-group"> -->
     <div>
         <h6>Year started:</h6>
         <p id="year_started"></p>
@@ -93,64 +96,82 @@
         <p id="access_road"></p>
     </div>
 
-</div>
+</div> -->
 
-<div id="map"></div>
+
 
 <script>
-    let mapOptions = {
-        center: [51.958, 9.141],
-        zoom: 10
-    }
-    let map = new L.map('map', mapOptions)
+    var dataurl = '{% url "get_sites" %}';
+    // var data = new L.GeoJSON.AJAX(dataurl)
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-    let marker = new L.marker([51.958, 9.141]).addTo(map)
-
-
-    let sidebar = new L.control.sidebar('side-bar', {
-        closeButton: true,
-        position: 'right'
-    })
-    map.addControl(sidebar)
-
-    marker.on('click', function () {
-        sidebar.toggle()
+    var siteMarker = L.ExtraMarkers.icon({
+        icon: 'fa-coffee',
+        markerColor: 'red',
+        shape: 'square',
+        prefix: 'fa'
     })
 
-
-
-    fetch("{% url 'get_sites' %}")
-        .then(function (resp) {
-            return resp.json();
-        })
-        .then(function (data) {
-            console.log(data);
-            points = L.geoJson(data)
-            L.geoJson(data, {
-                onEachFeature: function onEachFeature(feature, layer) {
-                    var props = feature.properties;
-                    var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
-                    // var popup = L.responsivePopup().setContent('A pretty CSS3 responsive popup.<br> Easily customizable.');
-                    layer.bindPopup(content);
-                    // layer.setIcon(redMarker);
-                    layer.on({
-                        click: function () {
-                            selected = props;
-                            sidebar.toggle();
-                            // openSidebar(props)
-                        }
-                    })
-
-                }
+    window.addEventListener("map:init", function (event) {
+        var map = event.detail.map;
+        // var sidebar = L.control.sidebar('sidebar', {
+        //     position: 'left'
+        // })
+        // var markers = L.markerClusterGroup();
+        // Download GeoJSON data with Ajax
+        // map.addControl(sidebar);
+        fetch(dataurl)
+            .then(function (resp) {
+                return resp.json();
             })
-                .addTo(map)
-            map.fitBounds(points.getBounds());
-        })
+            .then(function (data) {
+                points = L.geoJson(data)
+                L.geoJson(data, {
+                    onEachFeature: function onEachFeature(feature, layer) {
+                        var props = feature.properties;
+                        var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
+                        layer.setIcon(siteMarker);
+                        layer.bindPopup(content);
+
+                    }
+                }).addTo(map).on(
+                    'click', function () {
+                        // sidebar.setContent('Null').show();
+                    }
+                )
+                map.fitBounds(points.getBounds());
+
+
+            });
+    });
+
+
+    // fetch("{% url 'get_sites' %}")
+    //     .then(function (resp) {
+    //         return resp.json();
+    //     })
+    //     .then(function (data) {
+    //         console.log(data);
+    //         points = L.geoJson(data)
+    //         L.geoJson(data, {
+    //             onEachFeature: function onEachFeature(feature, layer) {
+    //                 var props = feature.properties;
+    //                 var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
+    //                 // var popup = L.responsivePopup().setContent('A pretty CSS3 responsive popup.<br> Easily customizable.');
+    //                 layer.bindPopup(content);
+    //                 // layer.setIcon(redMarker);
+    //                 layer.on({
+    //                     click: function () {
+    //                         selected = props;
+    //                         sidebar.toggle();
+    //                         // openSidebar(props)
+    //                     }
+    //                 })
+
+    //             }
+    //         })
+    //             .addTo(map)
+    //         map.fitBounds(points.getBounds());
+    //     })
 
 // Methods to be overriden on event occurances
 
