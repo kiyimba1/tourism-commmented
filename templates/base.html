@@ -11,6 +11,20 @@
     <link rel="apple-touch-icon" href="assets/img/Coatx-of-arms-of-Uganda-icon.png">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
     <link rel="stylesheet" href="{% static 'css/leaflet.extra-markers.min.css' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/uganda-court.png' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/uganda-court.png' %}">
+
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+
+    <!-- javascript -->
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+
+    <link rel="stylesheet" href="{% static 'css/L.Control.Sidebar.css'%}">
+    <script src="{% static 'js/L.Control.Sidebar.js' %}"></script>
+
 
     {% bootstrap_css %}
     {% bootstrap_javascript %}
@@ -26,13 +40,10 @@
         <div class="container d-flex justify-content-between align-items-center">
 
             <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">
-                <img class="img-fluid" src="./assets/img/Coat-of-arms-of-Uganda.png"
-                    alt="Ministry of Tousrism Wildlife and Antiquities"> Ministry of Tourism Wildlife and Antiquities
+                <img class="img-fluid" src="{% static 'images/uganda-court.png' %}" width="48" height="48"
+                    alt="Ministry of Tousrism Wildlife and Antiquities"> &nbsp;&nbsp; Ministry of Tourism Wildlife and
+                Antiquities
             </a>
-
-            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
-                id="templatemo_main_nav">
-            </div>
 
         </div>
     </nav>
@@ -57,7 +68,7 @@
     {% block map_content %}
 
     {% endblock map_content %}
-    <div class="row">
+    <div class="container row">
 
         <div class="col-md-4 pt-5">
             <h2 class="h2 text-success border-bottom pb-3 border-light logo">Resources</h2>
@@ -111,12 +122,7 @@
         </div>
 
     </footer>
-    <!-- End Footer -->
 
-    <!-- Start Script -->
-
-
-    <!-- End Script -->
 </body>
 
 </html>
