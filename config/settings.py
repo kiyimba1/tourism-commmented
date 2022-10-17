@@ -169,6 +169,21 @@ LEAFLET_CONFIG = {
             'css': [os.path.join(STATIC_URL, ('css/leaflet.extra-markers.min.css'))],
             'js': [os.path.join(STATIC_URL, ('js/leaflet.extra-markers.min.js'))],
             'auto-include': True,
+        },
+        'side-bar': {
+            'css': [os.path.join(STATIC_URL, ('css/leaflet-sidebar.min.css'))],
+            'js': [os.path.join(STATIC_URL, ('js/leaflet-sidebar.min.js'))],
+            'auto-include': True,
+        },
+        'locate': {
+            'css': [os.path.join(STATIC_URL, ('css/L.Control.Locate.min.css')), os.path.join(STATIC_URL, ('css/L.Control.Locate.mapbox.min.css'))],
+            'js': [os.path.join(STATIC_URL, ('js/L.Control.Locate.min.js'))],
+            'auto-include': True,
+        },
+        'routing-machine': {
+            'css': ["https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"],
+            'js': ["https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"],
+            'auto-include': True,
         }
     }
 }
