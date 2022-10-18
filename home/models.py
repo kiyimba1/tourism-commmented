@@ -31,18 +31,23 @@ class TouristSites(models.Model):
 
 
 class Chill(models.Model):
-    contact = models.CharField(max_length=255)
-    checkin = models.CharField(max_length=255)
-    checkout = models.CharField(max_length=255)
-    foods = models.CharField(max_length=255)
-    dishes = models.CharField(max_length=255)
-    sauces = models.CharField(max_length=255)
-    website = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    number_of_beds = models.CharField(max_length=255)
-    number_of_rooms = models.CharField(max_length=255)
-    chill = models.ForeignKey(
+    contact = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    checkin = models.CharField(max_length=255, null=True, blank=True)
+    checkout = models.CharField(max_length=255, null=True, blank=True)
+    foods = models.CharField(max_length=255, null=True, blank=True)
+    dishes = models.CharField(max_length=255, null=True, blank=True)
+    sauces = models.CharField(max_length=255, null=True, blank=True)
+    website = models.CharField(max_length=255, null=True, blank=True)
+    email = models.CharField(max_length=255, null=True, blank=True)
+    location = models.PointField()
+    number_of_beds = models.CharField(max_length=255, null=True, blank=True)
+    number_of_rooms = models.CharField(max_length=255, null=True, blank=True)
+    fee = models.CharField(max_length=255, null=True, blank=True)
+    type = models.ForeignKey(
         ChillType, related_name="chills", on_delete=models.CASCADE)
+    district = models.ForeignKey(
+        District, on_delete=models.CASCADE, related_name='chills')
 
 
 class Media(models.Model):
