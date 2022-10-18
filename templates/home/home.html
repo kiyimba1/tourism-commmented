@@ -120,6 +120,7 @@
 
     <script>
         var dataurl = '{% url "get_sites" %}';
+        var chilldataurl = '{% url "get_chills" %}';
         // var data = new L.GeoJSON.AJAX(dataurl)
         var sidebarDiv = document.getElementById('sidebar');
         var selected;
@@ -130,6 +131,15 @@
             shape: 'square',
             prefix: 'fa'
         })
+
+        function get_marker(color, icon) {
+            return L.ExtraMarkers.icon({
+                icon: icon,
+                markerColor: color,
+                shape: 'square',
+                prefix: 'fa'
+            })
+        }
 
         window.addEventListener("map:init", function (event) {
             var map = event.detail.map;
@@ -181,6 +191,7 @@
             // var markers = L.markerClusterGroup();
             // Download GeoJSON data with Ajax
             // map.addControl(sidebar);
+
             fetch(dataurl)
                 .then(function (resp) {
                     return resp.json();
@@ -204,6 +215,90 @@
                             var props = feature.properties;
                             var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
                             layer.setIcon(siteMarker);
+                            layer.bindPopup(popup);
+                            layer.on({
+                                click: function () {
+                                    // console.log(feature.latlng);
+                                    L.DomEvent.on(startBtn, 'click', function () {
+                                        L.control.spliceWaypoints(0, 1, feature.geometry.coordinates);
+                                        map.closePopup();
+                                    });
+
+                                    L.DomEvent.on(destBtn, 'click', function () {
+                                        L.control.spliceWaypoints(L.control.getWaypoints().length - 1, 1, feature.geometry.coordinates);
+                                        map.closePopup();
+                                    });
+
+                                    console.log(props)
+                                    content = document.getElementById('autopan').innerHTML = `
+                                                                <h1 id="name" class="leaflet-sidebar-header">
+                                                                   ${props.name}
+                                                                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                                                                </h1>
+                                                                <div>
+                                                                    <h6>Year started:</h6>
+                                                                    <p id="year_started">${props.year_of_inception}</p>
+                                                                </div>
+                                                                <div>
+                                                                    <h6>Description: </h6>
+                                                                    <p id="description"></p>
+                                                                </div>
+                                                                <div>
+                                                                    <h6>Fee: </h6>
+                                                                    <p id="fee">${props.name}</p>
+                                                                </div>
+                                                                <div>
+                                                                    <h6>Contact: </h6>
+                                                                    <p id="contact">${props.contact_name}</p>
+                                                                </div>
+                                                                <div>
+                                                                    <h6>Phone: </h6>
+                                                                    <p id="phone">${props.conatct}</p>
+                                                                </div>
+                                                                <div>
+                                                                    <h6>Email: </h6>
+                                                                    <p id="email">${props.email ? props.email : 'Not provided'}</p>
+                                                                </div>
+                                                                <div>
+                                                                    <h6>Access Road: </h6>
+                                                                    <p id="access_road"></p>
+                                                                </div>
+                                                            `;
+
+                                }
+                            })
+
+                        }
+                    }).addTo(map)
+                    map.fitBounds(points.getBounds());
+
+
+                });
+
+
+            fetch(chilldataurl)
+                .then(function (resp) {
+                    return resp.json();
+                })
+                .then(function (data) {
+                    points = L.geoJson(data)
+                    L.geoJson(data, {
+                        onEachFeature: function onEachFeature(feature, layer) {
+
+                            var container = L.DomUtil.create('div'),
+                                startBtn = createButton('Start from this location', container),
+                                destBtn = createButton('Go to this location', container);
+
+                            var popup = L.popup()
+                                .setLatLng([51.513, -0.09])
+                                .setContent(container)
+                                .openOn(map);
+
+
+
+                            var props = feature.properties;
+                            var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
+                            layer.setIcon(get_marker(props.type.color, props.type.icon));
                             layer.bindPopup(popup);
                             layer.on({
                                 click: function () {

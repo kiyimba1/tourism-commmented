@@ -41,7 +41,8 @@ class Chill(models.Model):
     email = models.CharField(max_length=255)
     number_of_beds = models.CharField(max_length=255)
     number_of_rooms = models.CharField(max_length=255)
-    chill = models.ForeignKey(ChillType, related_name="chills")
+    chill = models.ForeignKey(
+        ChillType, related_name="chills", on_delete=models.CASCADE)
 
 
 class Media(models.Model):

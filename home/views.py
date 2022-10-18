@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.core.serializers import serialize
 
 from district.models import District
-from home.models import TouristSites
+from home.models import Chill, TouristSites
 
 # Create your views here.
 
@@ -24,3 +24,8 @@ def district_dataset(request):
 def get_sites(request):
     sites = serialize('geojson', TouristSites.objects.all())
     return HttpResponse(sites, content_type='json')
+
+
+def get_chills(request):
+    hotels = serialize('geojson', Chill.objects.all())
+    return HttpResponse(hotels, content_type='json')
