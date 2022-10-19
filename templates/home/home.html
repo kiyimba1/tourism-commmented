@@ -132,6 +132,13 @@
             prefix: 'fa'
         })
 
+        var restaurantMarker = L.ExtraMarkers.icon({
+            icon: 'fa-coffee',
+            markerColor: 'orange',
+            shape: 'square',
+            prefix: 'fa'
+        })
+
         function get_marker(color, icon) {
             return L.ExtraMarkers.icon({
                 icon: icon,
@@ -281,6 +288,7 @@
                     return resp.json();
                 })
                 .then(function (data) {
+                    console.log(data);
                     points = L.geoJson(data)
                     L.geoJson(data, {
                         onEachFeature: function onEachFeature(feature, layer) {
@@ -298,7 +306,8 @@
 
                             var props = feature.properties;
                             var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
-                            layer.setIcon(get_marker(props.type.color, props.type.icon));
+                            layer.setIcon(restaurantMarker);
+                            layer.setIcon(get_marker(props.type.color, props.type.incon))
                             layer.bindPopup(popup);
                             layer.on({
                                 click: function () {

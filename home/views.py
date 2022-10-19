@@ -2,9 +2,12 @@ from django.shortcuts import render
 from django.views.generic import ListView
 from django.http import HttpResponse
 from django.core.serializers import serialize
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from district.models import District
 from home.models import Chill, TouristSites
+from home.serializers import ChillSerializer
 
 # Create your views here.
 
@@ -27,5 +30,14 @@ def get_sites(request):
 
 
 def get_chills(request):
-    hotels = serialize('geojson', Chill.objects.all())
-    return HttpResponse(hotels, content_type='json')
+    # hotels = serialize('geojson', Chill.objects.all())
+    hotels = ChillSerializer(Chill.objects.all(), many=True)
+    return Response(hotels.data)
+
+
+class ChillsView(APIView):
+    serializer_class = ChillSerializer
+
+    def get(self, request):
+        hotels = ChillSerializer(Chill.objects.all(), many=True)
+        return Response(hotels.data)

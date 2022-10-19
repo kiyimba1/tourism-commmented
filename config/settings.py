@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'bootstrap5',
     'djgeojson',
     'fontawesomefree',
+    'rest_framework',
+    'rest_framework_gis',
 
     'home',
     'district',
