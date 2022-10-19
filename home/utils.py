@@ -4,7 +4,7 @@ from pathlib import Path
 from django.contrib.gis.geos import Point
 
 from district.models import District, Village
-from home.models import Chill, ChillType, TouristSites
+from home.models import Chill, ChillType, Media, TouristSites
 
 
 def read_data(file):
@@ -45,6 +45,27 @@ def read_data(file):
             district=district,
             village=village
         )
+        links = []
+        try:
+            link = str(rw.get("image"))
+            links.append(link)
+        except:
+            pass
+        try:
+            link2 = rw.get("image_2")
+            links.append(link2)
+        except:
+            pass
+        try:
+            link3 = rw.get("image_3")
+            links.append(link3)
+        except:
+            pass
+        for link in links:
+            try:
+                Media.objects.get_or_create(link=link, chill=tour_site)
+            except:
+                pass
         print("Added")
 
 
@@ -94,4 +115,25 @@ def chill_data(file):
             location=loc
 
         )
+        links = []
+        try:
+            link = str(rw.get("image"))
+            links.append(link)
+        except:
+            pass
+        try:
+            link2 = rw.get("image_2")
+            links.append(link2)
+        except:
+            pass
+        try:
+            link3 = rw.get("image_3")
+            links.append(link3)
+        except:
+            pass
+        for link in links:
+            try:
+                Media.objects.get_or_create(link=link, chill=chill_site)
+            except:
+                pass
         print("Added")

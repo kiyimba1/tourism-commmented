@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from district.models import District
 from home.models import Chill, TouristSites
-from home.serializers import ChillSerializer
+from home.serializers import ChillSerializer, SiteSerializer
 
 # Create your views here.
 
@@ -41,3 +41,11 @@ class ChillsView(APIView):
     def get(self, request):
         hotels = ChillSerializer(Chill.objects.all(), many=True)
         return Response(hotels.data)
+
+
+class SitesView(APIView):
+    serializer_class = TouristSites
+
+    def get(self, request):
+        sites = SiteSerializer(TouristSites.objects.all(), many=True)
+        return Response(sites.data)

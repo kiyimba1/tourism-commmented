@@ -19,6 +19,7 @@ class TouristSites(models.Model):
     phone = models.CharField(max_length=255, null=True, blank=True)
     email = models.CharField(max_length=255, null=True, blank=True)
     contact_name = models.CharField(max_length=255)
+    description = models.TextField()
     popular_stop_overs = models.CharField(
         max_length=255, blank=True, null=True)
     nearest_main_hospital = models.CharField(
