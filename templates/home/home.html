@@ -46,7 +46,27 @@
 
 <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+{% if user.is_superuser %}
+<div class="col">
+    <div class="card">
+        <div class="card-body">
 
+            <fieldset name="Multiple Files Upload">
+                <div class="row">
+                    <div class="col">
+                        {% csrf_token %}
+                        <input class="form-control form-control" type="file" id="excel" name="file" />
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-primary" type="submit" id="upload">Upload</button>
+                    </div>
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% leaflet_map "main" %}
 
 <div id="sidebar" class="leaflet-sidebar">
@@ -56,6 +76,7 @@
         <ul role="tablist">
             <li><a href="#home" role="tab"><i class="fa fa-home active"></i></a></li>
             <li><a href="#autopan" role="tab"><i class="fa fa-book-open"></i></a></li>
+            <li><a href="/admin" role="tab"><i class="fa fa-key"></i></a></li>
         </ul>
 
 
@@ -124,6 +145,9 @@
 
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+
+
 
 
     <script>
@@ -186,16 +210,16 @@
                 return btn;
             }
 
-            map.on('click', function (e) {
-                var container = L.DomUtil.create('div'),
-                    startBtn = createButton('Start from this location', container),
-                    destBtn = createButton('Go to this location', container);
+            // map.on('click', function (e) {
+            //     var container = L.DomUtil.create('div'),
+            //         startBtn = createButton('Start from this location', container),
+            //         destBtn = createButton('Go to this location', container);
 
-                L.popup()
-                    .setContent(container)
-                    .setLatLng(e.latlng)
-                    .openOn(map);
-            });
+            //     L.popup()
+            //         .setContent(container)
+            //         .setLatLng(e.latlng)
+            //         .openOn(map);
+            // });
 
 
 
@@ -230,19 +254,19 @@
                             var props = feature.properties;
                             var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
                             layer.setIcon(siteMarker);
-                            layer.bindPopup(popup);
+                            // layer.bindPopup(popup);
                             layer.on({
                                 click: function () {
                                     // console.log(feature.latlng);
-                                    L.DomEvent.on(startBtn, 'click', function () {
-                                        L.control.spliceWaypoints(0, 1, feature.geometry.coordinates);
-                                        map.closePopup();
-                                    });
+                                    // L.DomEvent.on(startBtn, 'click', function () {
+                                    //     L.control.spliceWaypoints(0, 1, feature.geometry.coordinates);
+                                    //     map.closePopup();
+                                    // });
 
-                                    L.DomEvent.on(destBtn, 'click', function () {
-                                        L.control.spliceWaypoints(L.control.getWaypoints().length - 1, 1, feature.geometry.coordinates);
-                                        map.closePopup();
-                                    });
+                                    // L.DomEvent.on(destBtn, 'click', function () {
+                                    //     L.control.spliceWaypoints(L.control.getWaypoints().length - 1, 1, feature.geometry.coordinates);
+                                    //     map.closePopup();
+                                    // });
 
                                     console.log(props)
                                     content = document.getElementById('autopan').innerHTML = `
@@ -284,18 +308,11 @@
                                                             `;
 
                                     var myCarousel = document.querySelector('#slides')
-                                    for (let x in props.media) {
-                                        console.log(props.media[x])
-                                        img = `
-
-                                                                
-                                                                        <div>
-                                                                        <img src=${props.media[x].link}>
-                                                                        </div>
-                                                                    
-                                                                `
-                                        myCarousel.innerHTML += img
-                                    }
+                                    // for (let x in props.media) {
+                                    console.log(props.media[x])
+                                    img = props.media[0].link ? `<div><img src=${props.media[0].link}></div>` : ""
+                                    myCarousel.innerHTML += img
+                                    // }
 
                                     var carousel = new bootstrap.Carousel(myCarousel)
 
@@ -335,21 +352,21 @@
                             var content = `<h3>${props.location_code}</h3><p>${props.location_code}</p>`;
                             layer.setIcon(restaurantMarker);
                             layer.setIcon(get_marker(props.type.color, props.type.incon))
-                            layer.bindPopup(popup);
+                            // layer.bindPopup(popup);
                             layer.on({
                                 click: function () {
                                     // console.log(feature.latlng);
-                                    L.DomEvent.on(startBtn, 'click', function () {
-                                        L.control.spliceWaypoints(0, 1, feature.geometry.coordinates);
-                                        map.closePopup();
-                                    });
+                                    // L.DomEvent.on(startBtn, 'click', function () {
+                                    //     L.control.spliceWaypoints(0, 1, feature.geometry.coordinates);
+                                    //     map.closePopup();
+                                    // });
 
-                                    L.DomEvent.on(destBtn, 'click', function () {
-                                        L.control.spliceWaypoints(L.control.getWaypoints().length - 1, 1, feature.geometry.coordinates);
-                                        map.closePopup();
-                                    });
+                                    // L.DomEvent.on(destBtn, 'click', function () {
+                                    //     L.control.spliceWaypoints(L.control.getWaypoints().length - 1, 1, feature.geometry.coordinates);
+                                    //     map.closePopup();
+                                    // });
 
-                                    console.log(props)
+                                    // console.log(props)
                                     content = document.getElementById('autopan').innerHTML = `
                                                              
                                                             
@@ -392,18 +409,11 @@
                                                             `;
 
                                     var myCarousel = document.querySelector('#slides')
-                                    for (let x in props.media) {
-                                        console.log(props.media[x])
-                                        img = `
-
-                                           
-                                                <div>
-                                                <img src=${props.media[x].link}>
-                                                </div>
-                                            
-                                        `
-                                        myCarousel.innerHTML += img
-                                    }
+                                    // for (let x in props.media) {
+                                    console.log(props.media[0])
+                                    img = props.media[0].link ? `<div><img src=${props.media[0].link}></div>` : ""
+                                    myCarousel.innerHTML += img
+                                    // }
 
                                     var carousel = new bootstrap.Carousel(myCarousel)
 
@@ -416,6 +426,45 @@
 
 
                 });
+        });
+
+        $(document).ready(function (e) {
+            $('#upload').on('click', function () {
+                var form_data = new FormData();
+                var ins = document.getElementById('excel').files.length;
+
+                if (ins == 0) {
+                    $('#msg').html('<span style="color:red">Select at least one file</span>');
+                    return;
+                }
+
+                for (var x = 0; x < ins; x++) {
+                    form_data.append("file", document.getElementById('excel').files[x]);
+                }
+
+                csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+
+                //console.log(csrf_token);
+
+                form_data.append("csrfmiddlewaretoken", csrf_token);
+
+                $.ajax({
+                    url: "{% url 'upload_file' %}", // point to server-side URL
+                    dataType: 'json', // what to expect back from server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    //data: {'data': form_data, 'csrfmiddlewaretoken': csrf_token},
+                    data: form_data,
+                    type: 'post',
+                    success: function (response) { // display success response
+                        $('#msg').html(response.msg);
+                    },
+                    error: function (response) {
+                        $('#msg').html(response.message); // display error response
+                    }
+                });
+            });
         });
     </script>
 

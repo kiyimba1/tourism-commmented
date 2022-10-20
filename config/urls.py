@@ -24,3 +24,10 @@ urlpatterns = [
     path("", include(home_urls)),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# default: "Django Administration"
+admin.site.site_header = 'Dashboard'
+# default: "Site administration"
+admin.site.index_title = 'Dashboard'
+# default: "Django site admin"
+admin.site.site_title = 'Manage'
